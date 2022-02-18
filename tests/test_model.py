@@ -1,9 +1,17 @@
-from starter.tests.data import process_data
-from starter.tests.model import compute_model_metrics, inference, train_model
 import pandas as pd
+import pytest
+from starter.starter.ml.data import process_data
+from starter.starter.ml.model import compute_model_metrics, inference, train_model
 
-file_path = "/starter/data/census_cleaned.csv"
-data = pd.read_csv(file_path)
+
+@pytest.fixture(scope="session")
+def data():
+    file_path = "/starter/data/census_cleaned.csv"
+    sample = pd.read_csv(file_path)
+    return sample
+
+#file_path = "/starter/data/census_cleaned.csv"
+#data = pd.read_csv(file_path)
 
 
 def test_data_shape(data):
