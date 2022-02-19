@@ -1,3 +1,4 @@
+# GITHUB LINK: https://github.com/frkangul/udacity_course3
 # Notes on Project Requirements:
 ## git and dvc
 * In "screenshots" folder, there are continuous_integration.png and dvcdag.png. 
