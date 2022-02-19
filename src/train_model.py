@@ -1,16 +1,17 @@
-# Script to train machine learning model.
-
+"""
+Script to train machine learning model.
+python src/train_model.py
+"""
+import joblib
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
 # Add the necessary imports for the starter code.
-from src.data import process_data
-from src.model import train_model, compute_model_metrics, inference
-import pandas as pd
-import joblib
-
+from data import process_data
+from model import train_model, compute_model_metrics, inference
 
 # Add code to load in the data.
-data = pd.read_csv("../data/census_cleaned.csv")
+data = pd.read_csv("./data/census_cleaned.csv")
 # Optional enhancement, use K-fold cross validation instead of a train-test split.
 # drop unnecessary columns
 data.drop(columns=["fnlgt", "education-num", "capital-gain", "capital-loss"], inplace=True)
@@ -36,7 +37,7 @@ preds = inference(clf, X_train)
 precision, recall, fbeta = compute_model_metrics(y_train, preds)
 print(f"precision = {precision}, recall = {recall}, fbeta = {fbeta}")
 # Save model
-joblib.dump(clf, "../model/GradientBoostingClassifier.joblib")
+joblib.dump(clf, "./model/GradientBoostingClassifier.joblib")
 
 # Train model on slices of data
 sliced_values = []
@@ -57,7 +58,7 @@ for cat in cat_features:
         line = f"[{cat}->{cls}] Precision: {prc} Recall: {rcl} FBeta: {fb}"
         sliced_values.append(line)
 
-with open('../data/sliced_output.txt', 'w') as f:
+with open('./data/sliced_output.txt', 'w') as f:
     for sliced_value in sliced_values:
         f.write(sliced_value + '\n')
 
@@ -74,5 +75,5 @@ y = lb.inverse_transform(preds)[0]
 print(y)
 
 # Save encoder and lb
-joblib.dump(encoder, "../model/encoder.joblib")
-joblib.dump(lb, "../model/lb.joblib")
+joblib.dump(encoder, "./model/encoder.joblib")
+joblib.dump(lb, "./model/lb.joblib")

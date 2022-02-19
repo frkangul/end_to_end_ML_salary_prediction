@@ -1,3 +1,6 @@
+"""
+pytest api_test.py -vv
+"""
 import pytest
 from api import app
 from fastapi.testclient import TestClient

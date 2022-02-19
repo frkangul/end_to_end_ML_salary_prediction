@@ -2,8 +2,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from joblib import load
-from starter.ml.model import inference
-from starter.ml.data import process_data
+from src.model import inference
+from src.data import process_data
 from typing import Literal
 import numpy as np
 import pandas as pd
@@ -66,9 +66,9 @@ async def welcome_msg():
 
 @app.post("/")
 async def model_inference(test_data: req_body):
-    model = load("model/GradientBoostingClassifier.joblib")
-    encoder = load("model/encoder.joblib")
-    lb = load("model/lb.joblib")
+    model = load("./model/GradientBoostingClassifier.joblib")
+    encoder = load("./model/encoder.joblib")
+    lb = load("./model/lb.joblib")
 
     input_array = np.array([[
                      test_data.age,

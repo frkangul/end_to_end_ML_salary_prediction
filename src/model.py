@@ -1,5 +1,5 @@
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import fbeta_score, precision_score, recall_score
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
 
 
 # Optional: implement hyperparameter tuning.
