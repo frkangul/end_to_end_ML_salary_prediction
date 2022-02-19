@@ -1,0 +1,21 @@
+import requests
+
+data = {
+    "age": 41,
+    "workclass": "Private",
+    "education": "Masters",
+    "maritalStatus": "Married-civ-spouse",
+    "occupation": "Exec-managerial",
+    "relationship": "Husband",
+    "race": "Black",
+    "sex": "Male",
+    "hoursPerWeek": 50,
+    "nativeCountry": "United-States"
+    }
+
+r = requests.post('https://ml-heroku-fastapi.herokuapp.com/', json=data)
+
+#assert r.status_code == 200
+
+print(f"Response code: {r.status_code}")
+print("Response body: {r.json()}")
