@@ -1,4 +1,5 @@
 # Put the code for your API here.
+import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
 from joblib import load
@@ -111,12 +112,10 @@ async def model_inference(test_data: req_body):
                 df_temp,
                 categorical_features=cat_features,
                 encoder=encoder, lb=lb, training=False)
-    print(df_temp)
-    print(df_temp.info())
-    print(X)
-    data_deneme = pd.DataFrame(X)
-    print(data_deneme.sum())
     preds = inference(model, X)
-    print(preds)
     y = lb.inverse_transform(preds)[0]
     return {"prediction": y}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
