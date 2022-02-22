@@ -66,10 +66,10 @@ async def welcome_msg():
 
 @app.post("/")
 async def model_inference(test_data: req_body):
-    model = load("./model/GradientBoostingClassifier.joblib")
-    encoder = load("./model/encoder.joblib")
-    lb = load("./model/lb.joblib")
-
+    model = load("model/GradientBoostingClassifier.joblib")
+    encoder = load("model/encoder.joblib")
+    lb = load("model/lb.joblib")
+    print(encoder)
     input_array = np.array([[
                      test_data.age,
                      test_data.workclass,
@@ -111,11 +111,12 @@ async def model_inference(test_data: req_body):
                 df_temp,
                 categorical_features=cat_features,
                 encoder=encoder, lb=lb, training=False)
+    print(df_temp)
+    print(df_temp.info())
     print(X)
     data_deneme = pd.DataFrame(X)
     print(data_deneme.sum())
     preds = inference(model, X)
-    print(df_temp)
     print(preds)
     y = lb.inverse_transform(preds)[0]
     return {"prediction": y}
