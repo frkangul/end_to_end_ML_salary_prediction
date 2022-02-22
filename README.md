@@ -12,4 +12,4 @@
 * Create tests for an API:  api_test.py file is used to test API. On CLI, one can run "pytest api_test.py -vv" to see the result of test. 
 ## API Deployment
 * Deploy an app to Heroku: In "screenshots" folder, there are live_get.png and continuous_deloyment.png files.
-* Query live API: In "screenshots" folder, there is live_post.png file.
+* Query live API: In "screenshots" folder, there is live_post.png file. 
