@@ -34,15 +34,18 @@ X_train, y_train, encoder, lb = process_data(
 # Train and save a model.
 clf = train_model(X_train, y_train)
 preds = inference(clf, X_train)
+# Model performance on Training dataset
 precision, recall, fbeta = compute_model_metrics(y_train, preds)
 print(f"precision = {precision}, recall = {recall}, fbeta = {fbeta}")
 # Save model
 joblib.dump(clf, "./model/GradientBoostingClassifier.joblib")
 
-# Train model on slices of data
-sliced_values = []
+# Sliced performance on any categorical feature
 
-for cat in cat_features:
+
+def calculate_slice_performance(cat):
+    # Train model on slices of data
+    sliced_values = []
     for cls in test[cat].unique():
         df_temp = test[test[cat] == cls]
 
@@ -57,22 +60,27 @@ for cat in cat_features:
 
         line = f"[{cat}->{cls}] Precision: {prc} Recall: {rcl} FBeta: {fb}"
         sliced_values.append(line)
+    return sliced_values
+
+# Choose one cat feature to see sliced performance
+edu_cat = "education"
+edu_slice_perform = calculate_slice_performance(edu_cat)
 
 with open('./data/sliced_output.txt', 'w') as f:
-    for sliced_value in sliced_values:
+    for sliced_value in edu_slice_perform:
         f.write(sliced_value + '\n')
 
-# Testing
+# Model performance on Testing dataset
 test.drop(columns=["salary"], inplace=True)
 X_test, y_test, encoder, lb = process_data(
     test, encoder=encoder, lb=lb,
     categorical_features=cat_features, training=False)
-print(X_test)
+#print(X_test)
 preds = inference(clf, X_test)
-print(y_test)
-print(preds)
+#print(y_test)
+#print(preds)
 y = lb.inverse_transform(preds)[0]
-print(y)
+#print(y)
 
 # Save encoder and lb
 joblib.dump(encoder, "./model/encoder.joblib")
