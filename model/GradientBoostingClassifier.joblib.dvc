@@ -1,0 +1,4 @@
+outs:
+- md5: 5b5bd56e117952acb2e296c04c3c53c4
+  size: 177527
+  path: GradientBoostingClassifier.joblib
