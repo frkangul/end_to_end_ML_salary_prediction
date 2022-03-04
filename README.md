@@ -15,7 +15,7 @@ Gradient Boosting classification model is developed on publicly available Census
 * Write a model card: it is model_card.md file.
 ## API Creation
 * Create a REST API: api.py file is used to generate FastAPI. On CLI, one can run "uvicorn api:app --reload" to start API. In "screenshots" folder, there is example.png which shows example for POST method in API.
-* Create tests for an API:  api_test.py file is used to test API. On CLI, one can run "pytest api_test.py -vv" to see the result of test. 
+* ş*pşpğşCreate tests for an API:  api_test.py file is used to test API. On CLI, one can run "pytest api_test.py -vv" to see the result of test. 
 ## API Deployment
 * Deploy an app to Heroku: In "screenshots" folder, there are live_get.png and continuous_deloyment.png files.
 * Query live API: In "screenshots" folder, there is live_post.png file. 
