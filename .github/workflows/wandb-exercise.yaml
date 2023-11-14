@@ -1,0 +1,104 @@
+name: wandb-exercise
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  flak8-pytest-dvc-pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8.12
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Setup DVC
+        uses: iterative/setup-dvc@v1
+      - name: Pull data from DVC
+        run: dvc pull --force
+      - name: Run Flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Run pytest
+        run: |
+          pytest src/model_test.py -vv
+          pytest api_test.py -vv
+
+  ghapi:
+    if: (github.event.issue.pull_request != null) && contains(github.event.comment.body, '/wandb')
+    runs-on: ubuntu-latest
+    steps:        
+
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: |
+        pip install ghapi wandb
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Extract RUN ID from the PR command
+      id: runid-value
+      shell: python
+      run: |
+        import re, os
+        comment = os.getenv('PR_COMMENT', '')
+        match = re.search('/wandb[\s+](\S+)', comment)
+
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          if match:
+            print(f'VAL_FOUND=true', file=f)
+            print(f'RUN_ID={match.group(1)}', file=f)
+          else:
+            print(f'VAL_FOUND=false', file=f)
+      env:
+        PR_COMMENT: ${{ github.event.comment.body }}
+
+    - name: Generate a comparison report
+      if: steps.runid-value.outputs.VAL_FOUND == 'true'
+      id: report
+      run: python ./client/compare_runs.py
+      env:
+        WANDB_ENTITY: fgul
+        WANDB_PROJECT: udacity_exercise
+        BASELINE_TAG: baseline
+        RUN_ID: "${{ steps.runid-value.outputs.RUN_ID }}"
+        WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+    - name: Make a comment with API
+      uses: actions/github-script@v6
+      if: steps.report.outcome == 'success' 
+      with:
+        script: |
+           var msg = `You can find the comparison between the new run and baseline [in this report](${process.env.REPORT_URL})`
+           github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: msg
+            });
+      env:
+        REPORT_URL: "${{ steps.wandb-report.outputs.REPORT_URL }}"
