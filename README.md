@@ -1,4 +1,4 @@
-# Project Details:
+# Project Details::
 Gradient Boosting classification model is developed on publicly available Census Bureau data to predict customers who have above 50k salary.
 * One can re-train the model on CLI by "python src/train_model.py" command. One can run unit tests about modelling process on CLI by "pytest src/model_test.py -vv" command.
 * To generate local API, one can run "uvicorn api:app --reload" command. One can run unit tests about API process on CLI by "pytest api_test.py -vv" command.
